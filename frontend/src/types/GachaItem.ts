@@ -1,7 +1,7 @@
 export type GachaItem = {
   name: string;
   rarity: number;
-  rarityName: string;
-  imageUrl: string;
-  imageAlt: string;
+  rarity_name: string;
+  image_url: string;
+  image_alt: string;
 };
