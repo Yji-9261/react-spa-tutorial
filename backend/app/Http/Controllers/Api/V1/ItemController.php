@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ItemResource;
 use App\Models\Item;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,9 +14,7 @@ class ItemController extends Controller
      * GET api/v1/items アイテム一覧取得処理
      */
     public function index(Request $request) {
-        // $items = $request->user->items()->latest('item_user.id')->paginate(50);
-        $items = User::findOrFail(1)->items()->latest('item_user.id')->paginate(50);
-
+        $items = $request->user()->items()->latest('item_user.id')->paginate(50);
         return ItemResource::collection($items);
     }
 
@@ -25,11 +22,9 @@ class ItemController extends Controller
      * POST api/v1/lottery ガチャ抽選処理
      */
     public function store(Request $request) {
-        $itemResult = DB::transaction(function () {
+        $itemResult = DB::transaction(function () use($request){
             $item = $this->draw();
-            // $request->user->items()->attach($item->id);
-            User::findOrFail(1)->items()->attach($item->id);
-
+            $request->user()->items()->attach($item->id);
             return $item;
         });
 

@@ -9,8 +9,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
-    });
 
-    Route::get('/items', [ItemController::class, 'index']);
-    Route::post('/lottery', [ItemController::class, 'store']);
+        Route::get('/items', [ItemController::class, 'index']);
+        Route::post('/lottery', [ItemController::class, 'store']);
+    });
 });
