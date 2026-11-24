@@ -4,6 +4,8 @@ import { useNavigate } from "react-router";
 import ItemsDialog from "../components/ItemsDialog";
 import { api } from "../libs/api";
 import type { GachaItem } from "../types/GachaItem";
+import axios from "axios";
+import LoadingDialog from "../components/LoadingDialog";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -11,18 +13,19 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState("");
   const [gachaItems, setGachaItems] = useState<GachaItem[]>([]);
   const itemsDialogRef = useRef<HTMLDialogElement>(null);
+  const loadingfDialogRef = useRef<HTMLDialogElement>(null);
 
   async function handleGachaClick() {
     // 'POST api/v1/lottery'実行
     // 結果(アイテム名、レアリティ、アイテム画像など)をstateに受け渡す
     // 不正な結果を返した場合は、エラーメッセージを出力する
-
+    loadingfDialogRef.current?.showModal();
     try {
       const response = await api.post("/api/v1/lottery");
       console.log(response);
       const gachaItem: GachaItem = response.data.data;
       if (response.status === 200) {
-        navigate("/gacha", {state: gachaItem});
+        navigate("/gacha", { state: gachaItem });
       } else {
         setErrorMessage("予期せぬエラーが発生しました。");
         console.log(response);
@@ -30,10 +33,13 @@ export default function Home() {
     } catch (e) {
       setErrorMessage("通信エラーが発生しました。");
       console.log(e);
+    } finally {
+      loadingfDialogRef.current?.close();
     }
   }
 
   async function handleItemsClick() {
+    loadingfDialogRef.current?.showModal();
     try {
       // アイテム一覧取得API実行し、返ってきたjsonをGacahItemに変換
       const response = await api.get("/api/v1/items");
@@ -48,18 +54,33 @@ export default function Home() {
     } catch (e) {
       setErrorMessage("通信エラーが発生しました。");
       console.log(e);
+    } finally {
+      loadingfDialogRef.current?.close();
     }
   }
 
-  function handleLogoutClick() {
+  async function handleLogoutClick() {
     // ログアウトAPI実行し、成功したらログイン画面に遷移する
-
-    navigate("/login");
+    loadingfDialogRef.current?.showModal();
+    try {
+      await api.post("/logout");
+      navigate("/login");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error?.response?.data.message);
+      } else {
+        setErrorMessage("通信エラーが発生しました。");
+      }
+      console.log(error);
+    } finally {
+      loadingfDialogRef.current?.close();
+    }
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-10">
       <ItemsDialog items={gachaItems} ref={itemsDialogRef} />
+      <LoadingDialog ref={loadingfDialogRef}/>
 
       <div className="flex flex-col items-center gap-4">
         <h1 className="font-bold mb-4 text-xl">こんにちは{userName}さん</h1>
