@@ -1,8 +1,14 @@
-import { useNavigate } from "react-router";
-import Button from "../components/Button";
-import { useState, type SubmitEvent } from "react";
-import { api } from "../libs/api";
+import { useState, useRef, type SubmitEvent } from "react";
+
 import axios from "axios";
+import { useNavigate } from "react-router";
+
+import Button from "../components/Button";
+import LoadingDialog from "../components/LoadingDialog";
+import { useApi } from "../Hooks/Api";
+import { useAuth } from "../Hooks/Auth";
+import type { UserData } from "../types/User";
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,31 +16,45 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
+  const {login } = useAuth();
+  const loadingDialogRef = useRef<HTMLDialogElement>(null);
 
   const handleLoginClick = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // 通信中モーダルウィンドウを出し、ボタンの入力を無効化する
+    loadingDialogRef.current?.showModal();
+
+    // 前回の送信エラーメッセージをクリア
+    setErrorEmail("");
+    setErrorPassword("");
 
     try {
-      await api.get("/sanctum/csrf-cookie");
-      await api.post("/login", {
+      await useApi.post("/login", {
         email: email,
         password: password,
       });
 
+      // ログイン成功時にユーザー情報を取得して状態を更新
+      const response = await useApi.get<UserData>("/api/v1/user");
+      login(response.data);
+
       navigate("/");
     } catch (error) {
-      if (axios.isAxiosError(error)){
-        if(error.response?.status === 422) {
-            const e = error.response.data.errors;        
-            setErrorEmail(e?.email?.[0]);
-            setErrorPassword(e?.password?.[0]);
-        } 
-        else if(error.response?.status === 429){
-            setErrorEmail(error.response?.data.message);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 422) {
+          const e = error.response.data.errors;
+          setErrorEmail(e?.email?.[0]);
+          setErrorPassword(e?.password?.[0]);
+        } else if (error.response?.status === 429) {
+          setErrorEmail(error.response?.data.message);
+        } else {
+          setErrorEmail("通信エラーが発生しました。");
         }
-      }else {
-        setErrorEmail("通信エラーが発生しました。");
       }
+    }finally {
+      // モーダルウィンドウを閉じる
+      loadingDialogRef.current?.close();
     }
   };
 
@@ -44,6 +64,7 @@ export default function Login() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-10">
+      <LoadingDialog ref={loadingDialogRef} />
       <form onSubmit={handleLoginClick}>
         <h1 className="flex justify-center font-bold mb-4 text-xl">ログイン</h1>
         <div>
