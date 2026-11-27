@@ -17,7 +17,7 @@ class ItemResource extends JsonResource
             'name' => $this->name,
             'rarity' => $this->rarity,
             'rarity_name' => $this->rarity_name,
-            'image_url' => $this->image_url,
+            'image_url' => asset($this->image_url),
             'image_alt' => $this->image_alt,
         ];
     }

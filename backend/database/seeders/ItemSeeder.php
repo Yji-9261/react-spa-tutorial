@@ -12,20 +12,20 @@ class ItemSeeder extends Seeder
      */
     public function run(): void {
         $items = [
-            [['name' => '木の剣'], ['rarity' => 1]],
-            [['name' => '布の服'], ['rarity' => 1]],
-            [['name' => '木の盾'], ['rarity' => 1]],
-            [['name' => '薬草'], ['rarity' => 1]],
-            [['name' => '錆びた短剣'], ['rarity' => 1]],
+            [['name' => '木の剣'], ['rarity' => 1,'image_url' => '/images/item-n.png']],
+            [['name' => '布の服'], ['rarity' => 1, 'image_url' => '/images/item-n.png']],
+            [['name' => '木の盾'], ['rarity' => 1, 'image_url' => '/images/item-n.png']],
+            [['name' => '薬草'], ['rarity' => 1, 'image_url' => '/images/item-n.png']],
+            [['name' => '錆びた短剣'], ['rarity' => 1, 'image_url' => '/images/item-n.png']],
 
-            [['name' => '鋼鉄の剣'], ['rarity' => 2]],
-            [['name' => '魔力の指輪'], ['rarity' => 2]],
-            [['name' => '騎士の鎧'], ['rarity' => 2]],
+            [['name' => '鋼鉄の剣'], ['rarity' => 2, 'image_url' => '/images/item-r.png']],
+            [['name' => '魔力の指輪'], ['rarity' => 2, 'image_url' => '/images/item-r.png']],
+            [['name' => '騎士の鎧'], ['rarity' => 2, 'image_url' => '/images/item-r.png']],
 
-            [['name' => '炎竜の大剣'], ['rarity' => 3]],
-            [['name' => '精霊王の杖'], ['rarity' => 3]],
+            [['name' => '炎竜の大剣'], ['rarity' => 3, 'image_url' => '/images/item-sr.png']],
+            [['name' => '精霊王の杖'], ['rarity' => 3, 'image_url' => '/images/item-sr.png']],
 
-            [['name' => '神剣エクスカリバー'], ['rarity' => 4]],
+            [['name' => '神剣エクスカリバー'], ['rarity' => 4, 'image_url' => '/images/item-ssr.png']],
         ];
 
         foreach ($items as [$key, $value]) {

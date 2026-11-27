@@ -9,19 +9,18 @@ import { useApi } from "../Hooks/Api";
 import { useAuth } from "../Hooks/Auth";
 import type { UserData } from "../types/User";
 
-
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
-  const {login } = useAuth();
+  const { login } = useAuth();
   const loadingDialogRef = useRef<HTMLDialogElement>(null);
 
   const handleLoginClick = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // 通信中モーダルウィンドウを出し、ボタンの入力を無効化する
     loadingDialogRef.current?.showModal();
 
@@ -52,7 +51,7 @@ export default function Login() {
           setErrorEmail("通信エラーが発生しました。");
         }
       }
-    }finally {
+    } finally {
       // モーダルウィンドウを閉じる
       loadingDialogRef.current?.close();
     }

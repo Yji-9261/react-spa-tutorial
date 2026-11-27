@@ -23,7 +23,11 @@ export default function GachaResult() {
           {location.state.name}
         </label>
 
-        <img src={location.state.image_url} alt={location.state.image_alt} />
+        <img
+          src={location.state.image_url}
+          alt={location.state.image_alt}
+          className="aspect-square w-ful max-w-[256px] object-contain"
+        />
 
         <label className="text-sm font-medium text-gray-700">
           {location.state.rarity_name}
